@@ -1,20 +1,5 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-*.egg
-dist/
-build/
-.eggs/
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Virtual environment
-venv/
-env/
-.venv/
-.env
+# Node
+node_modules/
 
 # IDE
 .idea/
@@ -27,19 +12,3 @@ env/
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Project data
-data/*.db
-data/token.txt
-data/logs/
-data/uploads/
-
-# Vendor
-.deps/
-vendor/
-get-pip.py
-
-# Node / VitePress
-node_modules/
-docs/.vitepress/cache/
-docs/.vitepress/dist/
