@@ -344,10 +344,16 @@
     container.innerHTML =
       '<div class="home">' +
         '<div class="hero">' +
-          '<img class="hero__logo" src="' + logoSrc + '" alt="' + escapeHtml(heroName) + '">' +
-          '<h1 class="hero__title">' + escapeHtml(heroName) + ' <span class="accent">' + escapeHtml(heroText) + '</span></h1>' +
-          '<p class="hero__tagline">' + escapeHtml(heroTagline) + '</p>' +
-          '<div class="hero__actions">' + actionsHtml + '</div>' +
+          '<div class="hero__inner">' +
+            '<div class="hero__left">' +
+              '<h1 class="hero__title">' + escapeHtml(heroName) + ' <span class="accent">' + escapeHtml(heroText) + '</span></h1>' +
+              '<p class="hero__subtitle">' + escapeHtml(heroTagline) + '</p>' +
+              '<div class="hero__actions">' + actionsHtml + '</div>' +
+            '</div>' +
+            '<div class="hero__right">' +
+              '<img class="hero__logo" src="' + logoSrc + '" alt="' + escapeHtml(heroName) + '">' +
+            '</div>' +
+          '</div>' +
         '</div>' +
         '<div class="features">' + featuresHtml + '</div>' +
       '</div>';
@@ -381,9 +387,12 @@
         } else {
           var parsed = parseFrontmatter(md);
           var html = renderMarkdown(parsed.body);
-          contentEl.innerHTML = '<div class="markdown">' + html + '</div>';
+          var docNav = renderDocNav(route);
+          contentEl.innerHTML = '<div class="markdown">' + html + '</div>' + docNav;
           highlightCode(contentEl);
           updateToc(contentEl);
+          // 翻页按钮涟漪
+          $$('.doc-nav__item', contentEl).forEach(attachRipple);
         }
         void contentEl.offsetWidth;
         window.scrollTo({ top: 0, behavior: 'instant' });
@@ -413,6 +422,63 @@
   }
 
   function updateToc(container) {}
+
+  // ========== 翻页导航（上一页/下一页） ==========
+  // 扁平化所有文档页面（按 sidebar 顺序）
+  function getFlatPages() {
+    var pages = [];
+    Object.keys(CFG.sidebar).forEach(function (prefix) {
+      CFG.sidebar[prefix].forEach(function (group) {
+        group.items.forEach(function (item) {
+          pages.push({ link: item.link, text: item.text });
+        });
+      });
+    });
+    return pages;
+  }
+
+  function getNeighbors(route) {
+    var pages = getFlatPages();
+    var idx = -1;
+    for (var i = 0; i < pages.length; i++) {
+      if (pages[i].link === route) { idx = i; break; }
+    }
+    if (idx < 0) return null;
+    return {
+      prev: idx > 0 ? pages[idx - 1] : null,
+      next: idx < pages.length - 1 ? pages[idx + 1] : null,
+    };
+  }
+
+  function renderDocNav(route) {
+    var nb = getNeighbors(route);
+    if (!nb) return '';
+    var html = '<div class="doc-nav">';
+    if (nb.prev) {
+      html += '<a class="doc-nav__item doc-nav__item--prev" href="#' + nb.prev.link + '">' +
+        '<span class="doc-nav__label">上一页</span>' +
+        '<span class="doc-nav__title">' + escapeHtml(nb.prev.text) + '</span>' +
+        '</a>';
+    }
+    if (nb.next) {
+      var onlyClass = !nb.prev ? ' doc-nav__item--only' : '';
+      html += '<a class="doc-nav__item doc-nav__item--next' + onlyClass + '" href="#' + nb.next.link + '">' +
+        '<span class="doc-nav__label">下一页</span>' +
+        '<span class="doc-nav__title">' + escapeHtml(nb.next.text) + '</span>' +
+        '</a>';
+    }
+    // 如果只有 prev 没有 next（最后一页）
+    if (nb.prev && !nb.next) {
+      // 已添加 prev，next 不存在，prev 占满
+      html = '<div class="doc-nav">' +
+        '<a class="doc-nav__item doc-nav__item--prev doc-nav__item--only" href="#' + nb.prev.link + '">' +
+        '<span class="doc-nav__label">上一页</span>' +
+        '<span class="doc-nav__title">' + escapeHtml(nb.prev.text) + '</span>' +
+        '</a>';
+    }
+    html += '</div>';
+    return html;
+  }
 
   // ========== 侧边栏 ==========
   function renderSidebar(route) {

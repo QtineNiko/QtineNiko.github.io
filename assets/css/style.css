@@ -693,7 +693,10 @@ body.home .main {
 /* ========== 响应式 ========== */
 @media (max-width: 1024px) {
   .main { padding: 24px 32px 80px; }
+  /* 平板/手机：隐藏顶栏导航，只保留菜单按钮 */
+  .topbar__nav { display: none; }
 }
+
 @media (max-width: 768px) {
   /* 移动端：侧栏默认隐藏，open 时显示 */
   .sidebar {
@@ -702,10 +705,14 @@ body.home .main {
   }
   .sidebar.open { transform: translateX(0); }
   .main { margin-left: 0; padding: 16px 16px 64px; }
-  .topbar__nav { display: none; }
   .topbar__brand-text { font: var(--md-sys-typescale-title-m); }
   .markdown h1 { font: var(--md-sys-typescale-headline-m); }
   .markdown p, .markdown li { font: var(--md-sys-typescale-body-m); }
+  /* 主页 hero 在手机端改为纵向 */
+  .hero { padding: 48px 16px 40px; }
+  .hero__inner { flex-direction: column; gap: 24px; text-align: center; }
+  .hero__title { font-size: 44px; line-height: 52px; }
+  .hero__logo { width: 96px; height: 96px; }
 }
 
 /* ========== 首页 Hero ========== */
@@ -714,12 +721,24 @@ body.home .main {
   margin: 0 auto;
 }
 .hero {
-  text-align: center;
   padding: 80px 16px 56px;
 }
+.hero__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  flex-direction: row;
+}
+.hero__left {
+  flex: 1;
+  min-width: 0;
+}
+.hero__right {
+  flex-shrink: 0;
+}
 .hero__logo {
-  width: 140px; height: 140px;
-  margin: 0 auto 32px;
+  width: 180px; height: 180px;
   display: block;
   border-radius: var(--md-sys-shape-xl);
   animation: heroLogo 900ms var(--md-sys-motion-decelerate);
@@ -730,10 +749,10 @@ body.home .main {
   to { opacity: 1; transform: scale(1) rotate(0); }
 }
 .hero__title {
-  font: 500 64px/72px 'Roboto', 'Segoe UI', sans-serif;
+  font: 500 72px/80px 'Roboto', 'Segoe UI', sans-serif;
   color: var(--md-on-surface);
-  margin-bottom: 16px;
-  letter-spacing: -1px;
+  margin-bottom: 12px;
+  letter-spacing: -2px;
   animation: heroFadeUp 600ms var(--md-sys-motion-decelerate) 150ms both;
 }
 .hero__title .accent {
@@ -741,23 +760,16 @@ body.home .main {
   font-weight: 400;
 }
 .hero__subtitle {
-  font: 400 22px/30px 'Roboto', 'Segoe UI', sans-serif;
-  color: var(--md-on-surface);
-  margin-bottom: 8px;
-  animation: heroFadeUp 600ms var(--md-sys-motion-decelerate) 250ms both;
-}
-.hero__tagline {
-  font: var(--md-sys-typescale-body-l);
+  font: 400 24px/32px 'Roboto', 'Segoe UI', sans-serif;
   color: var(--md-on-surface-variant);
-  margin-bottom: 40px;
-  animation: heroFadeUp 600ms var(--md-sys-motion-decelerate) 350ms both;
+  margin-bottom: 32px;
+  animation: heroFadeUp 600ms var(--md-sys-motion-decelerate) 250ms both;
 }
 .hero__actions {
   display: flex;
   gap: 14px;
-  justify-content: center;
   flex-wrap: wrap;
-  animation: heroFadeUp 600ms var(--md-sys-motion-decelerate) 450ms both;
+  animation: heroFadeUp 600ms var(--md-sys-motion-decelerate) 350ms both;
 }
 .hero__actions .btn {
   padding: 14px 32px;
@@ -766,6 +778,53 @@ body.home .main {
 @keyframes heroFadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== 文档底部翻页 ========== */
+.doc-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--md-outline-variant);
+}
+.doc-nav__item {
+  flex: 1;
+  max-width: 48%;
+  padding: 16px 20px;
+  border-radius: var(--md-sys-shape-md);
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container);
+  color: var(--md-on-surface);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-emphasized),
+              box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-emphasized),
+              background var(--md-sys-motion-duration-short) var(--md-sys-motion-standard);
+}
+.doc-nav__item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md-sys-elevation-1);
+  background: var(--md-surface-container-high);
+  text-decoration: none;
+}
+.doc-nav__item--next {
+  text-align: right;
+}
+.doc-nav__item--only {
+  max-width: 100%;
+  text-align: center;
+}
+.doc-nav__label {
+  font: var(--md-sys-typescale-body-s);
+  color: var(--md-on-surface-variant);
+  margin-bottom: 4px;
+  display: block;
+}
+.doc-nav__title {
+  font: var(--md-sys-typescale-title-m);
+  color: var(--md-primary);
 }
 
 /* ========== 按钮 ========== */
